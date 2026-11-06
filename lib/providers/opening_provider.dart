@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/opening_model.dart';
+import '../repositories/opening_repository.dart';
 
 class OpeningProvider with ChangeNotifier {
+  final OpeningRepository _repository = OpeningRepository();
+
   bool _isLoading = false;
   List<OpeningModel> _openings = [];
   String? _errorMessage;
@@ -17,20 +20,10 @@ class OpeningProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulasi jeda jaringan (2 detik)
-      await Future.delayed(const Duration(seconds: 2));
-
-      _openings = [
-        OpeningModel(eco: 'B20', name: 'Sicilian Defense', pgn: '1. e4 c5'),
-        OpeningModel(eco: 'D06', name: "Queen's Gambit", pgn: '1. d4 d5 2. c4'),
-        OpeningModel(
-          eco: 'C50',
-          name: 'Italian Game',
-          pgn: '1. e4 e5 2. Nf3 Nc6 3. Bc4',
-        ),
-      ];
+      // Panggil API melalui Repository
+      _openings = await _repository.getOpenings();
     } catch (e) {
-      _errorMessage = 'Gagal memuat data: ${e.toString()}';
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();

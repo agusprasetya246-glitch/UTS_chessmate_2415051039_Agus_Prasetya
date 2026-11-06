@@ -52,16 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
               style: GoogleFonts.poppins(fontSize: 16),
             ),
             const SizedBox(height: 20),
-
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // 1. TAMPILAN LOADING
                   if (openingProvider.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  // 2. TAMPILAN ERROR
                   if (openingProvider.errorMessage != null) {
                     return Center(
                       child: Text(
@@ -71,14 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  // 3. TAMPILAN KOSONG (Empty State)
                   if (openingProvider.openings.isEmpty) {
                     return const Center(
                       child: Text('Tidak ada data pembukaan.'),
                     );
                   }
 
-                  // 4. TAMPILAN DATA (List/Grid Responsive)
                   if (constraints.maxWidth > 600) {
                     return GridView.builder(
                       gridDelegate:
@@ -94,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return OpeningCard(
                           title: opening.name,
                           ecoCode: opening.eco,
-                          onTap: () {},
+                          onTap: () {}, // Dikosongkan dulu untuk Tahap 8
                         );
                       },
                     );
@@ -107,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return OpeningCard(
                         title: opening.name,
                         ecoCode: opening.eco,
-                        onTap: () {},
+                        onTap: () {}, // Dikosongkan dulu untuk Tahap 8
                       );
                     },
                   );

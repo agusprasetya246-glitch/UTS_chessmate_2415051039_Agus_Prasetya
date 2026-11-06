@@ -40,6 +40,7 @@ dependencies:
   google_fonts: ^9.0.0
   flutter_chess_board: ^1.0.1
   intl: ^0.20.3
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +94,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  assets:
+    - .env
+
+  
