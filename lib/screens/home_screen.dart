@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/opening_card.dart';
+import '../providers/opening_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<OpeningProvider>().fetchOpenings();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final openingProvider = context.watch<OpeningProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -36,39 +53,60 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // --- IMPLEMENTASI RESPONSIVE LAYOUT ---
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Jika lebar layar lebih dari 600 (Tablet/Web), gunakan GridView
+                  // 1. TAMPILAN LOADING
+                  if (openingProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  // 2. TAMPILAN ERROR
+                  if (openingProvider.errorMessage != null) {
+                    return Center(
+                      child: Text(
+                        openingProvider.errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+
+                  // 3. TAMPILAN KOSONG (Empty State)
+                  if (openingProvider.openings.isEmpty) {
+                    return const Center(
+                      child: Text('Tidak ada data pembukaan.'),
+                    );
+                  }
+
+                  // 4. TAMPILAN DATA (List/Grid Responsive)
                   if (constraints.maxWidth > 600) {
                     return GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // 2 Kolom
-                            childAspectRatio:
-                                2.5, // Mengatur rasio lebar:tinggi kartu
+                            crossAxisCount: 2,
+                            childAspectRatio: 2.5,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
                           ),
-                      itemCount: 6,
+                      itemCount: openingProvider.openings.length,
                       itemBuilder: (context, index) {
+                        final opening = openingProvider.openings[index];
                         return OpeningCard(
-                          title: 'Dummy Opening ${index + 1}',
-                          ecoCode: 'A0${index + 1}',
+                          title: opening.name,
+                          ecoCode: opening.eco,
                           onTap: () {},
                         );
                       },
                     );
                   }
 
-                  // Jika layar HP (Compact), gunakan ListView
                   return ListView.builder(
-                    itemCount: 6,
+                    itemCount: openingProvider.openings.length,
                     itemBuilder: (context, index) {
+                      final opening = openingProvider.openings[index];
                       return OpeningCard(
-                        title: 'Dummy Opening ${index + 1}',
-                        ecoCode: 'A0${index + 1}',
+                        title: opening.name,
+                        ecoCode: opening.eco,
                         onTap: () {},
                       );
                     },
