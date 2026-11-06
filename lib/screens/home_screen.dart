@@ -35,17 +35,42 @@ class HomeScreen extends StatelessWidget {
               style: GoogleFonts.poppins(fontSize: 16),
             ),
             const SizedBox(height: 20),
+
+            // --- IMPLEMENTASI RESPONSIVE LAYOUT ---
             Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  // Memanggil Reusable Widget
-                  return OpeningCard(
-                    title: 'Dummy Opening ${index + 1}',
-                    ecoCode: 'A0${index + 1}',
-                    onTap: () {
-                      // Nanti diisi navigasi ke Detail
-                      print('Tapped on opening ${index + 1}');
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Jika lebar layar lebih dari 600 (Tablet/Web), gunakan GridView
+                  if (constraints.maxWidth > 600) {
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // 2 Kolom
+                            childAspectRatio:
+                                2.5, // Mengatur rasio lebar:tinggi kartu
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                      itemCount: 6,
+                      itemBuilder: (context, index) {
+                        return OpeningCard(
+                          title: 'Dummy Opening ${index + 1}',
+                          ecoCode: 'A0${index + 1}',
+                          onTap: () {},
+                        );
+                      },
+                    );
+                  }
+
+                  // Jika layar HP (Compact), gunakan ListView
+                  return ListView.builder(
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return OpeningCard(
+                        title: 'Dummy Opening ${index + 1}',
+                        ecoCode: 'A0${index + 1}',
+                        onTap: () {},
+                      );
                     },
                   );
                 },
